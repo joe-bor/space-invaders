@@ -40,7 +40,7 @@ body{
     grid-column-start: 2;
 }
 
-#player {
+.player {
     /*TODO: Insert SVG or IMG into div*/
     border: 1px solid greenyellow;
     border-radius: 50%;
