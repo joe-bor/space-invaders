@@ -25,8 +25,8 @@ body{
     border-radius: 2%;
     grid-column-start: 1;
     display: grid;
-    grid-template-columns: repeat(32, 1fr);
-    grid-template-rows: repeat(18, 1fr);
+    grid-template-columns: repeat(32, 1fr); /* WIDTH: 98 / 32 */
+    grid-template-rows: repeat(18, 1fr);    /* HEIGHT: 90 / 18 */
 }
 
 #game-board .tiles {
@@ -35,7 +35,17 @@ body{
     border-radius: 2%;
 }
 
-#status-bar {
+#status-bar { /*TODO: This will eventually be a grid/flex that contains player and enemy stats*/
     background-color: blue;
     grid-column-start: 2;
+}
+
+#player {
+    /*TODO: Insert SVG or IMG into div*/
+    border: 1px solid greenyellow;
+    border-radius: 50%;
+    background-color: aquamarine;
+    z-index: 10;
+    /* height: eval(90vh/18)vh;
+    width: eval(98vh/18)vh; */
 }
