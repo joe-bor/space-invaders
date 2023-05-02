@@ -6,9 +6,8 @@ class Ship {
 }
 
 class PlayerShip extends Ship {
-  constructor(type) {
+  constructor() {
     super(5, 20);
-    this.type = type; //TODO: Implement in the future? different ships?
   }
 
   //TODO: add 'borders'
@@ -16,32 +15,40 @@ class PlayerShip extends Ship {
     let playerShipIndex = divTilesArr.indexOf(
       document.querySelector(".player")
     );
-    divTilesArr[playerShipIndex].classList.remove("player");
-    divTilesArr[playerShipIndex + -1].classList.add("player");
+    if (playerShipIndex % 32 !== 0) {
+      divTilesArr[playerShipIndex].classList.remove("player");
+      divTilesArr[playerShipIndex + -1].classList.add("player");
+    }
   }
 
   moveShipRight() {
     let playerShipIndex = divTilesArr.indexOf(
       document.querySelector(".player")
     );
-    divTilesArr[playerShipIndex].classList.remove("player");
-    divTilesArr[playerShipIndex + 1].classList.add("player");
+    if (playerShipIndex % 32 !== 31) {
+      divTilesArr[playerShipIndex].classList.remove("player");
+      divTilesArr[playerShipIndex + 1].classList.add("player");
+    }
   }
 
   moveShipUp() {
     let playerShipIndex = divTilesArr.indexOf(
       document.querySelector(".player")
     );
-    divTilesArr[playerShipIndex].classList.remove("player");
-    divTilesArr[playerShipIndex - 32].classList.add("player");
+    if (playerShipIndex - 32 >= 0) {
+      divTilesArr[playerShipIndex].classList.remove("player");
+      divTilesArr[playerShipIndex - 32].classList.add("player");
+    }
   }
 
   moveShipDown() {
     let playerShipIndex = divTilesArr.indexOf(
       document.querySelector(".player")
     );
-    divTilesArr[playerShipIndex].classList.remove("player");
-    divTilesArr[playerShipIndex + 32].classList.add("player");
+    if (playerShipIndex + 32 <= 575) {
+      divTilesArr[playerShipIndex].classList.remove("player");
+      divTilesArr[playerShipIndex + 32].classList.add("player");
+    }
   }
 
   shootBullet() {
@@ -53,17 +60,16 @@ class PlayerShip extends Ship {
 }
 
 class EnemyShip extends Ship {
-  constructor(type) {
+  constructor() {
     super(5, Infinity);
-    this.type = type; //TODO: Implement various enemies?
   }
 }
 
 /*------------------
     CONSTANTS
 --------------------*/
-const player = new PlayerShip("Basic");
-const enemy = new EnemyShip("Basic");
+const player = new PlayerShip();
+const enemy = new EnemyShip();
 
 /*------------------
     STATE VARIABLES 

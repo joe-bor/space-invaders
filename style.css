@@ -46,6 +46,4 @@ body{
     border-radius: 50%;
     background-color: aquamarine;
     z-index: 10;
-    /* height: eval(90vh/18)vh;
-    width: eval(98vh/18)vh; */
 }
