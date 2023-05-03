@@ -5,12 +5,19 @@ class Ship {
   }
 }
 
+class Bullet {
+  constructor(speed) {
+    this.speed = speed;
+  }
+}
+
 class PlayerShip extends Ship {
-  constructor() {
+  constructor(gameOver = false, score = 0) {
     super(5, 20);
+    this.gameOver = gameOver;
+    this.score = score;
   }
 
-  //TODO: add 'borders'
   moveShipLeft() {
     let playerShipIndex = divTilesArr.indexOf(
       document.querySelector(".player")
@@ -59,9 +66,19 @@ class PlayerShip extends Ship {
   }
 }
 
+//TODO: Keep track of number of enemies left, enemyNum++ every time we instantiate enemyNum-- when they die?
 class EnemyShip extends Ship {
-  constructor() {
+  static enemyNum = 0;
+
+  constructor(isAlive = true) {
     super(5, Infinity);
+    this.isAlive = isAlive;
+    EnemyShip.enemyNum++;
+  }
+
+  destroyShip() {
+    this.isAlive = false;
+    EnemyShip.enemyNum--;
   }
 }
 
@@ -76,17 +93,25 @@ const enemy = new EnemyShip();
 --------------------*/
 player.health;
 player.bullets;
+player.gameOver;
+player.score;
 
 /*-------------------
     CACHED ELEMENTS
 -------------------*/
-const playerDiv = document.querySelector("#player");
+const gameBoard = document.querySelector("#game-board");
+for (let i = 0; i <= 575; i++) {
+  let divTilesEl = document.createElement("div");
+  divTilesEl.classList.add("tiles");
+  gameBoard.appendChild(divTilesEl);
+}
+//Starting Point
 const divTilesArr = [...document.querySelectorAll(".tiles")];
+divTilesArr[260].classList.add("player");
 
 /*------------------ 
     EVENT LISTENERS 
 -------------------*/
-//!! switch-case vs if-else ?
 document.addEventListener("keydown", (e) => {
   switch (e.key) {
     case "ArrowLeft":
@@ -103,6 +128,9 @@ document.addEventListener("keydown", (e) => {
       break;
     case "z":
       player.shootBullet();
+      break;
+    default:
+      console.log("Invalid key input"); //TODO: replace with 'buzz/error' sound
       break;
   }
 });
@@ -125,4 +153,19 @@ move current index position
 index + 1 =moveRight | index - 1 = moveLeft | index + 32 = moveDown | index -32 = moveUp
 then add class="player" at current position
 render
+*/
+
+/*
+HOW TO SHOOT:
+find player position = playerShipIndex
+find it's center = width/2 ?
+create an element w/ class='bullet' ?
+make it move along the div array ?
+checking for collisions along the way
+  if collision is detected, run collide function () = > {
+    delete bullet (remove class)
+    delete enemy (remove class)
+    explode sounds
+  }
+
 */

@@ -36,8 +36,61 @@ body{
 }
 
 #status-bar { /*TODO: This will eventually be a grid/flex that contains player and enemy stats*/
-    background-color: blue;
+    background-color: rgb(174, 42, 195);
     grid-column-start: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows:3fr 1fr;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+}
+
+#player-stats {
+    grid-area: 2 / 1 / 3 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2vmin;
+}
+
+#health-num {
+    grid-area: 1/ 1/ 2 / 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2vmin;
+}
+
+#score {
+    grid-area: 2 / 2 / 3 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2vmin;
+}
+
+#score-num {
+    grid-area: 1 / 2 / 2 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2vmin;
+}
+
+#enemy-stats {
+    grid-area: 2 / 3 / 3 / 4;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    font-size: 2vmin;
+}
+
+#enemy-num {
+    grid-area: 1 / 3 / 2 / 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2vmin;
 }
 
 .player {
