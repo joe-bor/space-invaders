@@ -25,14 +25,14 @@ body{
     border-radius: 2%;
     grid-column-start: 1;
     display: grid;
-    grid-template-columns: repeat(32, 1fr); /* WIDTH: 98 / 32 */
-    grid-template-rows: repeat(18, 1fr);    /* HEIGHT: 90 / 18 */
+    grid-template-columns: repeat(32, 1fr); /* WIDTH: (98 / 32) = 3.06vw  */
+    grid-template-rows: repeat(18, 1fr);    /* HEIGHT: (90 / 18) = 5vh */
 }
 
 #game-board .tiles {
     grid-area: span 1;
     border: 1px solid grey;
-    border-radius: 2%;
+    border-radius: 2%; 
 }
 
 #status-bar { /*TODO: This will eventually be a grid/flex that contains player and enemy stats*/
@@ -58,7 +58,8 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2vmin;
+    font-size: 5vmin;
+    font-weight: lighter;
 }
 
 #score {
@@ -74,7 +75,8 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2vmin;
+    font-size: 5vmin;
+    font-weight: lighter;
 }
 
 #enemy-stats {
@@ -90,7 +92,8 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2vmin;
+    font-size: 5vmin;
+    font-weight: lighter;
 }
 
 .player {
@@ -99,4 +102,19 @@ body{
     border-radius: 50%;
     background-color: aquamarine;
     z-index: 10;
+}
+
+.tiles .bullet {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bullet {
+    width: 1.5vw;
+    height: .5vh;
+    background-color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
