@@ -6,44 +6,45 @@ class Bullet {
 }
 
 class PlayerShip {
-  constructor(health = 5, gameOver = false, score = 0) {
+  constructor(health = 5, gameOver = false, score = 0, location) {
     this.health = health;
     this.gameOver = gameOver;
     this.score = score;
+    this.location = location;
   }
 
   moveShipLeft() {
-    if (playerShipIndex % WIDTH !== 0) {
-      board.splice(playerShipIndex, 1, 0);
-      board.splice(playerShipIndex - 1, 1, "hero");
-      playerShipIndex = playerShipIndex - 1;
+    if (this.location % WIDTH !== 0) {
+      board.splice(this.location, 1, 0);
+      board.splice(this.location - 1, 1, "hero");
+      this.location = this.location - 1;
       render();
     }
   }
 
   moveShipRight() {
-    if (playerShipIndex % WIDTH !== WIDTH - 1) {
-      board.splice(playerShipIndex, 1, 0);
-      board.splice(playerShipIndex + 1, 1, "hero");
-      playerShipIndex = playerShipIndex + 1;
+    if (this.location % WIDTH !== WIDTH - 1) {
+      board.splice(this.location, 1, 0);
+      board.splice(this.location + 1, 1, "hero");
+      this.location = this.location + 1;
       render();
     }
   }
 
   moveShipUp() {
-    if (playerShipIndex - WIDTH >= 0) {
-      board.splice(playerShipIndex, 1, 0);
-      board.splice(playerShipIndex - WIDTH, 1, "hero");
-      playerShipIndex = playerShipIndex - WIDTH;
+    if (this.location - WIDTH >= 0) {
+      board.splice(this.location, 1, 0);
+      board.splice(this.location - WIDTH, 1, "hero");
+      this.location = this.location - WIDTH;
       render();
     }
   }
 
   moveShipDown() {
-    if (playerShipIndex + WIDTH <= 575) {
-      board.splice(playerShipIndex, 1, 0);
-      board.splice(playerShipIndex + WIDTH, 1, "hero");
-      playerShipIndex = playerShipIndex + WIDTH;
+    if (this.location + WIDTH <= 575) {
+      board.splice(this.location, 1, 0);
+      board.splice(this.location + WIDTH, 1, "hero");
+      this.location = this.location + WIDTH;
       render();
     }
   }
@@ -60,15 +61,35 @@ class PlayerShip {
 class EnemyShip {
   static enemyNum = 0;
 
-  constructor(health = 3, isAlive = true) {
+  constructor(health = 3, isAlive = true, location) {
     this.health = health;
     this.isAlive = isAlive;
+    this.location = location;
     EnemyShip.enemyNum++;
   }
 
   destroyShip() {
     this.isAlive = false;
     EnemyShip.enemyNum--;
+  }
+
+  moveEnemyShips() {
+    //TODO: Make enemy reach top/bottom border, then move them forward, then repeat
+    board.splice(this.location, 1, 0);
+    board.splice(this.location - 1, 1, "ufo");
+    this.location = this.location - 1;
+    render();
+
+    //locate the index of enemy ships on the board
+    //delete enemy on current index
+    //alter current enemy location
+    //create enemy on new location
+    //render
+    //repeat till certain condition
+
+    // enemies.forEach(() => {
+    //   this.moveEnemyShips()
+    // })
   }
 }
 
@@ -88,10 +109,9 @@ const MARKER = {
     STATE VARIABLES 
 --------------------*/
 let board; //32x18 map, long array
-let player; //player.health, player.score, player.gameOver
-let playerShipIndex; //player's current location in the array
+let player; //player.health, player.score, player.gameOver, player.location
 let enemy; //EnemyShip.enemyNum
-
+let enemies; //container for all the enemy instance
 /*-------------------
 CACHED ELEMENTS
 -------------------*/
@@ -120,23 +140,20 @@ init();
 function init() {
   board = [...Array(576).fill(0)]; //array length = 576, filled with 0s
   board[260] = "hero"; //player location
+  player = new PlayerShip(5, false, 0, 260);
   const enemyLoc = [
     85, 86, 87, 88, 89, 90, 91, 92, 117, 118, 119, 120, 121, 122, 123, 124, 149,
     150, 151, 152, 153, 154, 155, 156, 181, 182, 183, 184, 185, 186, 187, 188,
     213, 214, 215, 216, 217, 218, 219, 220, 245, 246, 247, 248, 249, 250, 251,
     252, 277, 278, 279, 280, 281, 282, 283, 284,
   ];
+  enemies = [];
   for (let i = 0; i < enemyLoc.length; i++) {
     board[enemyLoc[i]] = "ufo";
-    enemy = new EnemyShip(3, true);
+    enemy = new EnemyShip(3, true, enemyLoc[i]);
+    enemies.push(enemy);
   }
-  playerShipIndex = board.indexOf("hero");
-
-  //! These seem irrelevant now
-  player = new PlayerShip(5, false, 0);
-
-  //! TEST
-  board[261] = "bullet";
+  // playerShipIndex = board.indexOf("hero");
 
   render();
 }
@@ -157,22 +174,6 @@ function renderStats() {
   healthNum.innerText = `${player.health}`;
   scoreNum.innerText = `${player.score}`;
   enemyNum.innerText = `${EnemyShip.enemyNum}`;
-}
-
-function moveEnemyShips() {
-  board.forEach((square, index) => {
-    if (square === "ufo") {
-      board.splice(index, 1, 0);
-      board.splice(index - 1, 1, "ufo");
-    }
-    //locate the index of enemy ships on the board
-    //delete enemy on current index
-    //alter current enemy location
-    //create enemy on new location
-    //render
-    //repeat till certain condition
-  });
-  render();
 }
 
 /*------------------ 
@@ -200,18 +201,6 @@ document.addEventListener("keydown", (e) => {
       break;
   }
 });
-
-/*
-HOW TO MOVE:
-Find the index of the element that has the class='player' indexOf() + classList.contains()? 
-this would give us the location of our player in the tiles array
-
-then remove class at current location.
-move current index position
-index + 1 =moveRight | index - 1 = moveLeft | index + 32 = moveDown | index -32 = moveUp
-then add class="player" at current position
-render
-*/
 
 /*
 HOW TO SHOOT:
