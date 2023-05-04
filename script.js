@@ -13,42 +13,38 @@ class PlayerShip {
   }
 
   moveShipLeft() {
-    let playerShipIndex = divTilesArr.indexOf(
-      document.querySelector(".player")
-    );
-    if (playerShipIndex % 32 !== 0) {
-      divTilesArr[playerShipIndex].classList.remove("player");
-      divTilesArr[playerShipIndex + -1].classList.add("player");
+    if (playerShipIndex % WIDTH !== 0) {
+      board.splice(playerShipIndex, 1, 0);
+      board.splice(playerShipIndex - 1, 1, "hero");
+      playerShipIndex = playerShipIndex - 1;
+      render();
     }
   }
 
   moveShipRight() {
-    let playerShipIndex = divTilesArr.indexOf(
-      document.querySelector(".player")
-    );
-    if (playerShipIndex % 32 !== 31) {
-      divTilesArr[playerShipIndex].classList.remove("player");
-      divTilesArr[playerShipIndex + 1].classList.add("player");
+    if (playerShipIndex % WIDTH !== WIDTH - 1) {
+      board.splice(playerShipIndex, 1, 0);
+      board.splice(playerShipIndex + 1, 1, "hero");
+      playerShipIndex = playerShipIndex + 1;
+      render();
     }
   }
 
   moveShipUp() {
-    let playerShipIndex = divTilesArr.indexOf(
-      document.querySelector(".player")
-    );
-    if (playerShipIndex - 32 >= 0) {
-      divTilesArr[playerShipIndex].classList.remove("player");
-      divTilesArr[playerShipIndex - 32].classList.add("player");
+    if (playerShipIndex - WIDTH >= 0) {
+      board.splice(playerShipIndex, 1, 0);
+      board.splice(playerShipIndex - WIDTH, 1, "hero");
+      playerShipIndex = playerShipIndex - WIDTH;
+      render();
     }
   }
 
   moveShipDown() {
-    let playerShipIndex = divTilesArr.indexOf(
-      document.querySelector(".player")
-    );
-    if (playerShipIndex + 32 <= 575) {
-      divTilesArr[playerShipIndex].classList.remove("player");
-      divTilesArr[playerShipIndex + 32].classList.add("player");
+    if (playerShipIndex + WIDTH <= 575) {
+      board.splice(playerShipIndex, 1, 0);
+      board.splice(playerShipIndex + WIDTH, 1, "hero");
+      playerShipIndex = playerShipIndex + WIDTH;
+      render();
     }
   }
 
@@ -93,11 +89,13 @@ const MARKER = {
 --------------------*/
 let board; //32x18 map, long array
 let player; //player.health, player.score, player.gameOver
+let playerShipIndex; //player's current location in the array
 let enemy; //EnemyShip.enemyNum
-
 /*-------------------
 CACHED ELEMENTS
 -------------------*/
+
+//dynamically create divs in our HTML
 const gameBoard = document.querySelector("#game-board");
 for (let i = 0; i <= 575; i++) {
   let divTilesEl = document.createElement("div");
@@ -107,6 +105,10 @@ for (let i = 0; i <= 575; i++) {
 
 //Array of 'squares' on our screen
 const divTilesArr = document.querySelectorAll(".tiles");
+
+const healthNum = document.querySelector("#health-num");
+const scoreNum = document.querySelector("#score-num");
+const enemyNum = document.querySelector("#enemy-num");
 
 /*------------------ 
     FUNCTIONS 
@@ -125,20 +127,32 @@ function init() {
   ];
   for (let i = 0; i < enemyLoc.length; i++) {
     board[enemyLoc[i]] = "ufo";
+    enemy = new EnemyShip(3, true);
   }
+  playerShipIndex = board.indexOf("hero");
 
   //! These seem irrelevant now
   player = new PlayerShip(5, false, 0);
-  enemy = new EnemyShip(3, true);
 
   render();
 }
 
 function render() {
+  renderBoard();
+  renderStats();
+}
+
+function renderBoard() {
   board.forEach((square, idx) => {
     divTilesArr[idx].innerHTML = MARKER[square];
     // divTilesArr[idx].innerText = idx;
   });
+}
+
+function renderStats() {
+  healthNum.innerText = `${player.health}`;
+  scoreNum.innerText = `${player.score}`;
+  enemyNum.innerText = `${EnemyShip.enemyNum}`;
 }
 
 /*------------------ 
@@ -166,11 +180,6 @@ document.addEventListener("keydown", (e) => {
       break;
   }
 });
-
-// //!! DELETE this later
-// divTilesArr.forEach((divTile, index) => {
-//   divTile.innerText = index;
-// });
 
 /*
 HOW TO MOVE:
