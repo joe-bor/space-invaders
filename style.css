@@ -12,7 +12,7 @@ body{
 }
 
 #game-container {
-    height: 90vh;
+    height: 98vh;
     width: 98vw;
     display: grid;
     grid-template-columns: 16fr 1fr;
@@ -35,7 +35,7 @@ body{
     border-radius: 2%; 
 }
 
-#status-bar { /*TODO: This will eventually be a grid/flex that contains player and enemy stats*/
+#status-bar {
     background-color: rgb(174, 42, 195);
     grid-column-start: 2;
     display: grid;
@@ -96,25 +96,10 @@ body{
     font-weight: lighter;
 }
 
-.player {
-    /*TODO: Insert SVG or IMG into div*/
-    border: 1px solid greenyellow;
-    border-radius: 50%;
-    background-color: aquamarine;
-    z-index: 10;
-}
 
-.tiles .bullet {
+.tiles {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
-}
-
-.bullet {
-    width: 1.5vw;
-    height: .5vh;
-    background-color: red;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-size: 2vmin;
 }

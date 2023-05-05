@@ -1,12 +1,11 @@
 class Bullet {
-  constructor(speed) {
-    this.speed = speed;
-    //!! Speed will be the # in ms for setinterval
+  constructor(location) {
+    this.location = location;
   }
 }
 
 class PlayerShip {
-  constructor(health = 5, gameOver = false, score = 0, location) {
+  constructor(health = 5, gameOver = false, score = 0, location = 260) {
     this.health = health;
     this.gameOver = gameOver;
     this.score = score;
@@ -73,23 +72,25 @@ class EnemyShip {
     EnemyShip.enemyNum--;
   }
 
-  moveEnemyShips() {
-    //TODO: Make enemy reach top/bottom border, then move them forward, then repeat
+  moveEnemyShipsUp() {
+    board.splice(this.location, 1, 0);
+    board.splice(this.location - WIDTH, 1, "ufo");
+    this.location = this.location - WIDTH;
+    render();
+  }
+
+  moveEnemyShipsDown() {
+    board.splice(this.location, 1, "0");
+    board.splice(this.location + WIDTH, 1, "ufo");
+    this.location = this.location + WIDTH;
+    render();
+  }
+
+  moveEnemyShipsLeft() {
     board.splice(this.location, 1, 0);
     board.splice(this.location - 1, 1, "ufo");
     this.location = this.location - 1;
     render();
-
-    //locate the index of enemy ships on the board
-    //delete enemy on current index
-    //alter current enemy location
-    //create enemy on new location
-    //render
-    //repeat till certain condition
-
-    // enemies.forEach(() => {
-    //   this.moveEnemyShips()
-    // })
   }
 }
 
@@ -100,7 +101,7 @@ const WIDTH = 32;
 const MARKER = {
   hero: `<svg xmlns="http://www.w3.org/2000/svg" width="45" height="40" transform="rotate(90)" fill="#FF237a" viewBox="0 0 256 256"><path d="M152,224a8,8,0,0,1-8,8H112a8,8,0,0,1,0-16h32A8,8,0,0,1,152,224Zm71.62-68.17-12.36,55.63a16,16,0,0,1-25.51,9.11L158.51,200h-61L70.25,220.57a16,16,0,0,1-25.51-9.11L32.38,155.83a16.09,16.09,0,0,1,3.32-13.71l28.56-34.26a123.07,123.07,0,0,1,8.57-36.67c12.9-32.34,36-52.63,45.37-59.85a16,16,0,0,1,19.6,0c9.34,7.22,32.47,27.51,45.37,59.85a123.07,123.07,0,0,1,8.57,36.67l28.56,34.26A16.09,16.09,0,0,1,223.62,155.83Zm-139.23,34Q68.28,160.5,64.83,132.16L48,152.36,60.36,208l.18-.13ZM140,100a12,12,0,1,0-12,12A12,12,0,0,0,140,100Zm68,52.36-16.83-20.2q-3.42,28.28-19.56,57.69l23.85,18,.18.13Z"></path></svg>`,
 
-  ufo: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#000000" viewBox="0 0 256 256"><path d="M183.59,213.47a8,8,0,0,1-15.18,5.06l-8-24a8,8,0,0,1,15.18-5.06ZM128,184a8,8,0,0,0-8,8v32a8,8,0,0,0,16,0V192A8,8,0,0,0,128,184Zm-37.47.41a8,8,0,0,0-10.12,5.06l-8,24a8,8,0,0,0,15.18,5.06l8-24A8,8,0,0,0,90.53,184.41ZM248,112c0,16.22-13.37,30.89-37.65,41.29C188.22,162.78,159,168,128,168s-60.22-5.22-82.35-14.71C21.37,142.89,8,128.22,8,112c0-8.37,3.67-20.79,21.17-32.5,11.37-7.61,26.94-13.76,45.18-17.85A63.64,63.64,0,0,1,173,50.45a64.84,64.84,0,0,1,9.11,11.3C223.43,71.09,248,89.74,248,112ZM176,96a47.66,47.66,0,0,0-6.06-23.35l-.06-.09A48.07,48.07,0,0,0,127.36,48C101.25,48.34,80,70.25,80,96.83v3a7.92,7.92,0,0,0,6.13,7.76A188.24,188.24,0,0,0,128,112a188.09,188.09,0,0,0,41.85-4.37A7.93,7.93,0,0,0,176,99.87Z"></path></svg>`,
+  ufo: `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="30" fill="#000000" viewBox="0 0 256 256"><path d="M183.59,213.47a8,8,0,0,1-15.18,5.06l-8-24a8,8,0,0,1,15.18-5.06ZM128,184a8,8,0,0,0-8,8v32a8,8,0,0,0,16,0V192A8,8,0,0,0,128,184Zm-37.47.41a8,8,0,0,0-10.12,5.06l-8,24a8,8,0,0,0,15.18,5.06l8-24A8,8,0,0,0,90.53,184.41ZM248,112c0,16.22-13.37,30.89-37.65,41.29C188.22,162.78,159,168,128,168s-60.22-5.22-82.35-14.71C21.37,142.89,8,128.22,8,112c0-8.37,3.67-20.79,21.17-32.5,11.37-7.61,26.94-13.76,45.18-17.85A63.64,63.64,0,0,1,173,50.45a64.84,64.84,0,0,1,9.11,11.3C223.43,71.09,248,89.74,248,112ZM176,96a47.66,47.66,0,0,0-6.06-23.35l-.06-.09A48.07,48.07,0,0,0,127.36,48C101.25,48.34,80,70.25,80,96.83v3a7.92,7.92,0,0,0,6.13,7.76A188.24,188.24,0,0,0,128,112a188.09,188.09,0,0,0,41.85-4.37A7.93,7.93,0,0,0,176,99.87Z"></path></svg>`,
   bullet: "͢",
   0: " ",
 };
@@ -112,6 +113,8 @@ let board; //32x18 map, long array
 let player; //player.health, player.score, player.gameOver, player.location
 let enemy; //EnemyShip.enemyNum
 let enemies; //container for all the enemy instance
+let isGoingDown; //direction enemies are going
+
 /*-------------------
 CACHED ELEMENTS
 -------------------*/
@@ -139,8 +142,8 @@ init();
 
 function init() {
   board = [...Array(576).fill(0)]; //array length = 576, filled with 0s
-  board[260] = "hero"; //player location
-  player = new PlayerShip(5, false, 0, 260);
+  player = new PlayerShip();
+  board[player.location] = "hero";
   const enemyLoc = [
     85, 86, 87, 88, 89, 90, 91, 92, 117, 118, 119, 120, 121, 122, 123, 124, 149,
     150, 151, 152, 153, 154, 155, 156, 181, 182, 183, 184, 185, 186, 187, 188,
@@ -153,7 +156,6 @@ function init() {
     enemy = new EnemyShip(3, true, enemyLoc[i]);
     enemies.push(enemy);
   }
-  // playerShipIndex = board.indexOf("hero");
 
   render();
 }
@@ -166,6 +168,7 @@ function render() {
 function renderBoard() {
   board.forEach((square, idx) => {
     divTilesArr[idx].innerHTML = MARKER[square];
+    if (idx <= 31) divTilesArr[idx].style.backgroundColor = "red";
     // divTilesArr[idx].innerText = idx;
   });
 }
@@ -220,3 +223,53 @@ checking for collisions along the way
 //TODO: Gather Sound Effects
 //TODO: Look for 'logos' or images'
 //TODO: Refactor: playerShipIndex? moveShip functions?
+
+// let moveEnemyID = setInterval(moveEnemy, 500);
+
+function moveEnemy() {
+  for (let i = 0; i < enemies.length; i++) {
+    //if at bottom border
+    if (enemies[i].location > 543) {
+      enemies.forEach((enemy) => {
+        enemy.moveEnemyShipsLeft();
+      });
+      isGoingDown = false;
+      break;
+      //if at top border
+    } else if (enemies[i].location < 32) {
+      enemies.forEach((enemy) => {
+        enemy.moveEnemyShipsLeft();
+      });
+      isGoingDown = true;
+      break;
+    }
+  }
+
+  if (isGoingDown) {
+    enemies.reverse();
+    enemies.forEach((enemy) => {
+      enemy.moveEnemyShipsDown();
+    });
+    enemies.reverse();
+  } else if (!isGoingDown) {
+    enemies.forEach((enemy) => {
+      enemy.moveEnemyShipsUp();
+    });
+  }
+}
+
+/**
+ call function
+are ships in the bottom border?
+(yes)   call moveLeft function
+  set isGoingDown to false
+  break;
+
+ is it going down?
+    if yes, enemies.reverse()
+    go down function
+    enemies.reverse
+
+    if no,
+    go up function
+ */
