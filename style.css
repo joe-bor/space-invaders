@@ -16,7 +16,7 @@ body{
     width: 98vw;
     display: grid;
     grid-template-columns: 16fr 1fr;
-    border: 5px solid gold;
+    border: 1px solid gold;
     border-radius: 2%;
 }
 
@@ -27,12 +27,18 @@ body{
     display: grid;
     grid-template-columns: repeat(32, 1fr); /* WIDTH: (98 / 32) = 3.06vw  */
     grid-template-rows: repeat(18, 1fr);    /* HEIGHT: (90 / 18) = 5vh */
+    background:  url(https://i.imgur.com/fSk3jkJ.jpg);
+    background-size: 100% 100%;
 }
 
 #game-board .tiles {
     grid-area: span 1;
     border: 1px solid grey;
-    border-radius: 2%; 
+    border-radius: 2%;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    font-size: 2vmin;
 }
 
 #status-bar {
@@ -97,9 +103,3 @@ body{
 }
 
 
-.tiles {
-    display: flex;
-    align-items: stretch;
-    justify-content: center;
-    font-size: 2vmin;
-}
