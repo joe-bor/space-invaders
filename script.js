@@ -8,22 +8,26 @@ class Bullet {
     console.log(this); //!
 
     if (this.location % WIDTH === WIDTH - 1) {
-      console.log("border");
+      console.log("border"); //!
       clearInterval(this.intervalId);
+      board.splice(this.location, 1, 0);
     }
     //check what's on the index next to it
-    else if (board[this.location + 1] === 0) {
+    else if (
+      board[this.location + 1] === 0 ||
+      board[this.location + 1] === "bullet"
+    ) {
       board.splice(this.location, 2, 0, "bullet");
       this.location = this.location + 1;
     } else if (board[this.location + 1] === "ufo") {
-      console.log("CLEAR"); //!
+      console.log("Hit! Clear Interval"); //!
       clearInterval(this.intervalId);
       board.splice(this.location, 2, 0, 0);
 
-      //go into enemies[] , access the enemy that has location === where 'ufo' was spliced = [this.location + 1] set to dead
+      //!go into enemies[] , access the enemy that has location === where 'ufo' was spliced = [this.location + 1] set to dead
       enemies.forEach((enemy) => {
         if (enemy.location === this.location + 1) {
-          enemy.isAlive = false;
+          enemy.destroyShip();
         }
       });
 
@@ -87,12 +91,15 @@ class PlayerShip {
   }
 
   shootBullet() {
-    //define how it moves, setInterval(ƒ moveBullet)
-    console.log("shoot");
-    let bullet = new Bullet(this.location + 1);
-    board[bullet.location] = "bullet";
-    bullet.intervalId = setInterval(bullet.moveBullet.bind(bullet), 500);
-    render();
+    if (board[this.location + 1] !== 0) {
+      console.log("cant shoot"); //!
+    } else {
+      console.log("shoot"); //!
+      let bullet = new Bullet(this.location + 1);
+      board[bullet.location] = "bullet";
+      bullet.intervalId = setInterval(bullet.moveBullet.bind(bullet), 500);
+      render();
+    }
 
     //i need to pass this to Bullet class
     //const bulletIntervalId = setInterval(bullet.moveBullet.bind(bullet), 500);
@@ -291,4 +298,10 @@ function moveEnemy() {
 !Refactor: splice movements into one
 !Refactor: moveShip functions?
 
+*/
+
+/*
+BUGS:
+negative alien count
+bullets getting stuck
 */
