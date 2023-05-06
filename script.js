@@ -1,6 +1,44 @@
 class Bullet {
-  constructor(location) {
+  constructor(location, intervalId) {
     this.location = location;
+    this.intervalId = intervalId;
+  }
+
+  moveBullet() {
+    console.log(this); //!
+
+    if (this.location % WIDTH === WIDTH - 1) {
+      console.log("border");
+      clearInterval(this.intervalId);
+    }
+    //check what's on the index next to it
+    else if (board[this.location + 1] === 0) {
+      board.splice(this.location, 2, 0, "bullet");
+      this.location = this.location + 1;
+    } else if (board[this.location + 1] === "ufo") {
+      console.log("CLEAR"); //!
+      clearInterval(this.intervalId);
+      board.splice(this.location, 2, 0, 0);
+
+      //go into enemies[] , access the enemy that has location === where 'ufo' was spliced = [this.location + 1] set to dead
+      enemies.forEach((enemy) => {
+        if (enemy.location === this.location + 1) {
+          enemy.isAlive = false;
+        }
+      });
+
+      /*
+      if there is a UFO beside it
+      clearinterval
+      splice the bullet and the ufo
+      get board location of ufo
+      use this location to access enemy with same location in enemies[]
+      set matching ufo to  'dead'
+      set conditions in render to only render alive ufo
+
+      */
+    }
+    render();
   }
 }
 
@@ -49,21 +87,22 @@ class PlayerShip {
   }
 
   shootBullet() {
-    //call this function when `shift` is pressed
-    //on  press, create a new object (define a class for this?)
     //define how it moves, setInterval(ƒ moveBullet)
     console.log("shoot");
     let bullet = new Bullet(this.location + 1);
     board[bullet.location] = "bullet";
+    bullet.intervalId = setInterval(bullet.moveBullet.bind(bullet), 500);
     render();
-    console.log(bullet);
+
+    //i need to pass this to Bullet class
+    //const bulletIntervalId = setInterval(bullet.moveBullet.bind(bullet), 500);
   }
 }
 
 class EnemyShip {
   static enemyNum = 0;
 
-  constructor(health = 3, isAlive = true, location) {
+  constructor(health = 1, isAlive = true, location) {
     this.health = health;
     this.isAlive = isAlive;
     this.location = location;
@@ -155,7 +194,7 @@ function init() {
   enemies = [];
   for (let i = 0; i < enemyLoc.length; i++) {
     board[enemyLoc[i]] = "ufo";
-    enemy = new EnemyShip(3, true, enemyLoc[i]);
+    enemy = new EnemyShip(1, true, enemyLoc[i]);
     enemies.push(enemy);
   }
 
@@ -213,14 +252,14 @@ function moveEnemy() {
     //bottom border
     if (enemies[i].location > 543) {
       enemies.forEach((enemy) => {
-        enemy.moveEnemyShipsLeft();
+        if (enemy.isAlive) enemy.moveEnemyShipsLeft();
       });
       isGoingDown = false;
       break;
       //top border
     } else if (enemies[i].location < 32) {
       enemies.forEach((enemy) => {
-        enemy.moveEnemyShipsLeft();
+        if (enemy.isAlive) enemy.moveEnemyShipsLeft();
       });
       isGoingDown = true;
       break;
@@ -230,12 +269,12 @@ function moveEnemy() {
   if (isGoingDown) {
     enemies.reverse();
     enemies.forEach((enemy) => {
-      enemy.moveEnemyShipsDown();
+      if (enemy.isAlive) enemy.moveEnemyShipsDown();
     });
     enemies.reverse();
   } else if (!isGoingDown) {
     enemies.forEach((enemy) => {
-      enemy.moveEnemyShipsUp();
+      if (enemy.isAlive) enemy.moveEnemyShipsUp();
     });
   }
 }
@@ -249,7 +288,7 @@ function moveEnemy() {
 !CSS
 
 
-
+!Refactor: splice movements into one
 !Refactor: moveShip functions?
 
 */
