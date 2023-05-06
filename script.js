@@ -5,44 +5,33 @@ class Bullet {
   }
 
   moveBullet() {
-    console.log(this); //!
-
     if (this.location % WIDTH === WIDTH - 1) {
-      console.log("border"); //!
       clearInterval(this.intervalId);
       board.splice(this.location, 1, 0);
     }
     //check what's on the index next to it
-    else if (
-      board[this.location + 1] === 0 ||
-      board[this.location + 1] === "bullet"
-    ) {
+    else if (board[this.location + 1] === "bullet") return;
+    else if (board[this.location + 1] === 0) {
       board.splice(this.location, 2, 0, "bullet");
       this.location = this.location + 1;
     } else if (board[this.location + 1] === "ufo") {
-      console.log("Hit! Clear Interval"); //!
       clearInterval(this.intervalId);
       board.splice(this.location, 2, 0, 0);
 
-      //!go into enemies[] , access the enemy that has location === where 'ufo' was spliced = [this.location + 1] set to dead
-      enemies.forEach((enemy) => {
+      for (const enemy of enemies) {
         if (enemy.location === this.location + 1) {
           enemy.destroyShip();
+          break;
         }
-      });
-
-      /*
-      if there is a UFO beside it
-      clearinterval
-      splice the bullet and the ufo
-      get board location of ufo
-      use this location to access enemy with same location in enemies[]
-      set matching ufo to  'dead'
-      set conditions in render to only render alive ufo
-
-      */
+      }
+      console.log(this);
     }
     render();
+  }
+
+  //!
+  clearBullet() {
+    this.location = null;
   }
 }
 
@@ -91,18 +80,14 @@ class PlayerShip {
   }
 
   shootBullet() {
-    if (board[this.location + 1] !== 0) {
-      console.log("cant shoot"); //!
+    if (board[this.location + 1] === "bullet") {
+      return;
     } else {
-      console.log("shoot"); //!
       let bullet = new Bullet(this.location + 1);
       board[bullet.location] = "bullet";
       bullet.intervalId = setInterval(bullet.moveBullet.bind(bullet), 500);
       render();
     }
-
-    //i need to pass this to Bullet class
-    //const bulletIntervalId = setInterval(bullet.moveBullet.bind(bullet), 500);
   }
 }
 
@@ -168,7 +153,7 @@ let isGoingDown; //direction enemies are going
 CACHED ELEMENTS
 -------------------*/
 
-//dynamically create divs in our HTML
+//dynamically create div in our HTML
 const gameBoard = document.querySelector("#game-board");
 for (let i = 0; i <= 575; i++) {
   let divTilesEl = document.createElement("div");
@@ -226,32 +211,6 @@ function renderStats() {
   enemyNum.innerText = `${EnemyShip.enemyNum}`;
 }
 
-/*------------------ 
-    EVENT LISTENERS 
--------------------*/
-document.addEventListener("keydown", (e) => {
-  switch (e.key) {
-    case "ArrowLeft":
-      player.moveShipLeft();
-      break;
-    case "ArrowRight":
-      player.moveShipRight();
-      break;
-    case "ArrowUp":
-      player.moveShipUp();
-      break;
-    case "ArrowDown":
-      player.moveShipDown();
-      break;
-    case "z":
-      player.shootBullet();
-      break;
-    default:
-      console.log("Invalid key input"); //TODO: replace with 'buzz/error' sound
-      break;
-  }
-});
-
 // let moveEnemyID = setInterval(moveEnemy, 500);
 
 function moveEnemy() {
@@ -285,6 +244,31 @@ function moveEnemy() {
     });
   }
 }
+/*------------------ 
+    EVENT LISTENERS 
+-------------------*/
+document.addEventListener("keydown", (e) => {
+  switch (e.key) {
+    case "ArrowLeft":
+      player.moveShipLeft();
+      break;
+    case "ArrowRight":
+      player.moveShipRight();
+      break;
+    case "ArrowUp":
+      player.moveShipUp();
+      break;
+    case "ArrowDown":
+      player.moveShipDown();
+      break;
+    case "z":
+      player.shootBullet();
+      break;
+    default:
+      console.log("Invalid key input"); //TODO: replace with 'buzz/error' sound
+      break;
+  }
+});
 
 /*
 !Finish implementing Bullet movement and how it interacts with collisions
@@ -301,7 +285,9 @@ function moveEnemy() {
 */
 
 /*
-BUGS:
-negative alien count
-bullets getting stuck
+!BUGS:
+!negative alien count
+!bullets getting stuck
 */
+
+// setInterval(render, 100);
