@@ -1,44 +1,51 @@
 class Bullet {
-  constructor(location, intervalId) {
+  constructor(owner, location, intervalId) {
+    this.owner = owner;
     this.location = location;
     this.intervalId = intervalId;
   }
 
   moveBullet() {
     if (this.location % WIDTH === WIDTH - 1) {
-      clearInterval(this.intervalId);
       board.splice(this.location, 1, 0);
+      clearInterval(this.intervalId);
     }
     //check what's on the index next to it
     else if (board[this.location + 1] === "bullet") return;
     else if (board[this.location + 1] === 0) {
-      board.splice(this.location, 2, 0, "bullet");
+      board.splice(this.location, 1, 0);
+      board.splice(this.location + 1, 1, "bullet");
+
       this.location = this.location + 1;
     } else if (board[this.location + 1] === "ufo") {
-      clearInterval(this.intervalId);
-      board.splice(this.location, 2, 0, 0);
-
-      for (const enemy of enemies) {
-        if (enemy.location === this.location + 1) {
-          enemy.destroyShip();
-          break;
+      board.splice(this.location, 1, 0);
+      this.location += 1;
+      for (let i = 0; i < enemies.length; i++) {
+        if (enemies[i].location !== this.location) continue;
+        else {
+          board.splice(this.location, 1, 0);
+          this.owner.score += enemies[i].location % WIDTH;
+          enemies[i].destroyShip();
+          clearInterval(this.intervalId);
+          checkForWin();
         }
       }
-      console.log(this);
     }
     render();
-  }
-
-  //!
-  clearBullet() {
-    this.location = null;
   }
 }
 
 class PlayerShip {
-  constructor(health = 5, gameOver = false, score = 0, location = 260) {
+  constructor(
+    health = 5,
+    isGameOver = false,
+    isWinner = false,
+    score = 0,
+    location = 260
+  ) {
     this.health = health;
-    this.gameOver = gameOver;
+    this.isGameOver = isGameOver;
+    this.isWinner = isWinner;
     this.score = score;
     this.location = location;
   }
@@ -80,12 +87,12 @@ class PlayerShip {
   }
 
   shootBullet() {
-    if (board[this.location + 1] === "bullet") {
+    if (board[this.location + 1] !== 0) {
       return;
     } else {
-      let bullet = new Bullet(this.location + 1);
+      let bullet = new Bullet(this, this.location + 1);
       board[bullet.location] = "bullet";
-      bullet.intervalId = setInterval(bullet.moveBullet.bind(bullet), 500);
+      bullet.intervalId = setInterval(bullet.moveBullet.bind(bullet), 100);
       render();
     }
   }
@@ -102,8 +109,10 @@ class EnemyShip {
   }
 
   destroyShip() {
-    this.isAlive = false;
-    EnemyShip.enemyNum--;
+    if (this.isAlive === true) {
+      this.isAlive = false;
+      EnemyShip.enemyNum--;
+    }
   }
 
   moveEnemyShipsUp() {
@@ -114,7 +123,7 @@ class EnemyShip {
   }
 
   moveEnemyShipsDown() {
-    board.splice(this.location, 1, "0");
+    board.splice(this.location, 1, 0);
     board.splice(this.location + WIDTH, 1, "ufo");
     this.location = this.location + WIDTH;
     render();
@@ -178,10 +187,11 @@ function init() {
   player = new PlayerShip();
   board[player.location] = "hero";
   const enemyLoc = [
-    85, 86, 87, 88, 89, 90, 91, 92, 117, 118, 119, 120, 121, 122, 123, 124, 149,
-    150, 151, 152, 153, 154, 155, 156, 181, 182, 183, 184, 185, 186, 187, 188,
-    213, 214, 215, 216, 217, 218, 219, 220, 245, 246, 247, 248, 249, 250, 251,
-    252, 277, 278, 279, 280, 281, 282, 283, 284,
+    // 85, 86, 87, 88, 89, 90, 91, 92, 117, 118, 119, 120, 121, 122, 123, 124, 149,
+    // 150, 151, 152, 153, 154, 155, 156, 181, 182, 183, 184, 185, 186, 187, 188,
+    // 213, 214, 215, 216, 217, 218, 219, 220, 245, 246, 247, 248, 249, 250, 251,
+    252,
+    277, 278, 279, 280, 281, 282, 283, 284,
   ];
   enemies = [];
   for (let i = 0; i < enemyLoc.length; i++) {
@@ -211,7 +221,22 @@ function renderStats() {
   enemyNum.innerText = `${EnemyShip.enemyNum}`;
 }
 
-// let moveEnemyID = setInterval(moveEnemy, 500);
+function checkForWin() {
+  if (EnemyShip.enemyNum === 0) {
+    player.isWinner = true;
+    clearInterval(moveEnemyID);
+  }
+
+  for (let enemy of enemies) {
+    if (enemy.location % WIDTH === 0) {
+      player.isGameOver = true;
+      clearInterval(moveEnemyID);
+    }
+  }
+}
+
+//!
+let moveEnemyID = setInterval(moveEnemy, 500);
 
 function moveEnemy() {
   for (let i = 0; i < enemies.length; i++) {
@@ -243,6 +268,7 @@ function moveEnemy() {
       if (enemy.isAlive) enemy.moveEnemyShipsUp();
     });
   }
+  checkForWin();
 }
 /*------------------ 
     EVENT LISTENERS 
@@ -271,7 +297,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 /*
-!Finish implementing Bullet movement and how it interacts with collisions
+*Finish implementing Bullet movement and how it interacts with collisions
 !Set win and lose conditions
 !Create modal -> before playing
 !Gather Sound Effects
@@ -286,8 +312,6 @@ document.addEventListener("keydown", (e) => {
 
 /*
 !BUGS:
-!negative alien count
-!bullets getting stuck
+*negative alien count
+*bullets getting stuck
 */
-
-// setInterval(render, 100);
