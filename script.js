@@ -157,11 +157,10 @@ let player; //player.health, player.score, player.gameOver, player.location
 let enemy; //EnemyShip.enemyNum
 let enemies; //container for all the enemy instance
 let isGoingDown; //direction enemies are going
-
+let moveEnemyID;
 /*-------------------
-CACHED ELEMENTS
+  CACHED ELEMENTS
 -------------------*/
-
 //dynamically create div in our HTML
 const gameBoard = document.querySelector("#game-board");
 for (let i = 0; i <= 575; i++) {
@@ -176,11 +175,13 @@ const healthNum = document.querySelector("#health-num");
 const scoreNum = document.querySelector("#score-num");
 const enemyNum = document.querySelector("#enemy-num");
 
+const modal = document.querySelector("dialog");
+modal.showModal();
 /*------------------ 
     FUNCTIONS 
 ------------------*/
 
-init();
+// init();
 
 function init() {
   board = [...Array(576).fill(0)]; //array length = 576, filled with 0s
@@ -199,7 +200,7 @@ function init() {
     enemy = new EnemyShip(1, true, enemyLoc[i]);
     enemies.push(enemy);
   }
-
+  moveEnemyID = setInterval(moveEnemy, 500);
   render();
 }
 
@@ -234,9 +235,6 @@ function checkForWin() {
     }
   }
 }
-
-//!
-let moveEnemyID = setInterval(moveEnemy, 500);
 
 function moveEnemy() {
   for (let i = 0; i < enemies.length; i++) {
@@ -298,7 +296,7 @@ document.addEventListener("keydown", (e) => {
 
 /*
 *Finish implementing Bullet movement and how it interacts with collisions
-!Set win and lose conditions
+*Set win and lose conditions
 !Create modal -> before playing
 !Gather Sound Effects
 !Look for 'logos' or images'
@@ -311,7 +309,6 @@ document.addEventListener("keydown", (e) => {
 */
 
 /*
-!BUGS:
-*negative alien count
-*bullets getting stuck
-*/
+ Modal: Brief intro, how to play
+ <button> that removes modal then invokes init()
+ */
