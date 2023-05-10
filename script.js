@@ -158,6 +158,7 @@ let enemy; //EnemyShip.enemyNum
 let enemies; //container for all the enemy instance
 let isGoingDown; //direction enemies are going
 let moveEnemyID;
+
 /*-------------------
   CACHED ELEMENTS
 -------------------*/
@@ -176,23 +177,28 @@ const scoreNum = document.querySelector("#score-num");
 const enemyNum = document.querySelector("#enemy-num");
 
 const modal = document.querySelector("dialog");
-modal.showModal();
-/*------------------ 
-    FUNCTIONS 
-------------------*/
+const playBtn = document.querySelector("#play-button");
+const statusBar = document.querySelector("#status-bar");
 
-// init();
+/*------------------ 
+FUNCTIONS 
+------------------*/
+modal.showModal();
 
 function init() {
-  board = [...Array(576).fill(0)]; //array length = 576, filled with 0s
+  //create an array w/ length = 576 then fill with 0s
+  board = [...Array(576).fill(0)];
+
+  //create and put player on board
   player = new PlayerShip();
   board[player.location] = "hero";
+
+  //sets invaders' locations
   const enemyLoc = [
-    // 85, 86, 87, 88, 89, 90, 91, 92, 117, 118, 119, 120, 121, 122, 123, 124, 149,
-    // 150, 151, 152, 153, 154, 155, 156, 181, 182, 183, 184, 185, 186, 187, 188,
-    // 213, 214, 215, 216, 217, 218, 219, 220, 245, 246, 247, 248, 249, 250, 251,
-    252,
-    277, 278, 279, 280, 281, 282, 283, 284,
+    85, 86, 87, 88, 89, 90, 91, 92, 117, 118, 119, 120, 121, 122, 123, 124, 149,
+    150, 151, 152, 153, 154, 155, 156, 181, 182, 183, 184, 185, 186, 187, 188,
+    213, 214, 215, 216, 217, 218, 219, 220, 245, 246, 247, 248, 249, 250, 251,
+    252, 277, 278, 279, 280, 281, 282, 283, 284,
   ];
   enemies = [];
   for (let i = 0; i < enemyLoc.length; i++) {
@@ -201,6 +207,8 @@ function init() {
     enemies.push(enemy);
   }
   moveEnemyID = setInterval(moveEnemy, 500);
+
+  statusBar.style.visibility = "visible";
   render();
 }
 
@@ -268,6 +276,7 @@ function moveEnemy() {
   }
   checkForWin();
 }
+
 /*------------------ 
     EVENT LISTENERS 
 -------------------*/
@@ -294,6 +303,11 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+playBtn.addEventListener("click", () => {
+  modal.close();
+  init();
+});
+
 /*
 *Finish implementing Bullet movement and how it interacts with collisions
 *Set win and lose conditions
@@ -307,8 +321,3 @@ document.addEventListener("keydown", (e) => {
 !Refactor: moveShip functions?
 
 */
-
-/*
- Modal: Brief intro, how to play
- <button> that removes modal then invokes init()
- */

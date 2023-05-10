@@ -5,30 +5,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap"
+      rel="stylesheet"
+    />
     <script src="script.js" defer></script>
     <title>Space Invaders</title>
   </head>
   <body>
     <dialog>
       <div><h1>SPACE INVADERS</h1></div>
-      <p>
-        I recreated the classic game of Space Invaders using HTML,CSS and
+      <p id="intro">
+        A recreation of the classic game of Space Invaders using HTML,CSS and
         JavaScript, following the MVC design pattern and incorporating what I
         know of Object Oriented Programming Principles.
       </p>
       <p>
-        GOAL: To survive and shoot down all the enemy invaders before they reach
-        the left side of the screen. The game also ends when you have either
-        destroyed all the invaders or you have lost all your lives.
+        <strong>GOAL</strong>: To survive and shoot down all the enemy invaders
+        before they reach the left side of the screen. The game also ends when
+        you have either destroyed all the invaders or you have lost all your
+        lives.
       </p>
-      <p>INSTRUCTIONS:</p>
-      <ol>
-        <li>Use the 'Arrow' Keys to move your ship</li>
-        <li>Press the 'Z' Key to shoot</li>
-        <li>Good luck and have fun!</li>
-      </ol>
+      <p><strong>INSTRUCTIONS:</strong>
+        <ul>
+          <li>Use the '⬅️ ⬆️ ➡️ ⬇️' Keys to move your ship</li>
+          <li>Press the 'Z' Key to shoot</li>
+          <li>Good luck and have fun!</li>
+        </ul>
+      </p>
+      
 
-      <button>PLAY</button>
+      <button id="play-button">PLAY GAME</button>
     </dialog>
     <div id="background"></div>
     <div id="game-container">
@@ -37,11 +46,11 @@
       </div>
       <div id="status-bar">
         <div id="player-stats">HEALTH</div>
-        <div id="health-num">❤️ 5</div>
+        <div id="health-num">❤️</div>
         <div id="score">SCORE</div>
-        <div id="score-num">100</div>
+        <div id="score-num">🏆</div>
         <div id="enemy-stats">👽 INVADERS</div>
-        <div id="enemy-num">8</div>
+        <div id="enemy-num">👾</div>
       </div>
     </div>
   </body>
