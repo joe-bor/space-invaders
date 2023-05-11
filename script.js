@@ -6,6 +6,7 @@ class Bullet {
   }
 
   moveBullet() {
+    //if at right border
     if (this.location % WIDTH === WIDTH - 1) {
       board.splice(this.location, 1, 0);
       clearInterval(this.intervalId);
@@ -15,7 +16,6 @@ class Bullet {
     else if (board[this.location + 1] === 0) {
       board.splice(this.location, 1, 0);
       board.splice(this.location + 1, 1, "bullet");
-
       this.location = this.location + 1;
     } else if (board[this.location + 1] === "ufo") {
       board.splice(this.location, 1, 0);
@@ -27,7 +27,6 @@ class Bullet {
           this.owner.score += enemies[i].location % WIDTH;
           enemies[i].destroyShip();
           clearInterval(this.intervalId);
-          checkForWin();
         }
       }
     }
@@ -41,13 +40,15 @@ class PlayerShip {
     isGameOver = false,
     isWinner = false,
     score = 0,
-    location = 260
+    location = 260,
+    bullets = []
   ) {
     this.health = health;
     this.isGameOver = isGameOver;
     this.isWinner = isWinner;
     this.score = score;
     this.location = location;
+    this.bullets = bullets;
   }
 
   moveShipLeft() {
@@ -91,6 +92,7 @@ class PlayerShip {
       return;
     } else {
       let bullet = new Bullet(this, this.location + 1);
+      this.bullets.push(bullet);
       board[bullet.location] = "bullet";
       bullet.intervalId = setInterval(bullet.moveBullet.bind(bullet), 100);
       render();
@@ -169,17 +171,16 @@ for (let i = 0; i <= 575; i++) {
   divTilesEl.classList.add("tiles");
   gameBoard.appendChild(divTilesEl);
 }
-
 const divTilesArr = document.querySelectorAll(".tiles");
-
 const healthNum = document.querySelector("#health-num");
 const scoreNum = document.querySelector("#score-num");
 const enemyNum = document.querySelector("#enemy-num");
-
+const statusBar = document.querySelector("#status-bar");
 const modal = document.querySelector("dialog");
 const playBtn = document.querySelector("#play-button");
-const statusBar = document.querySelector("#status-bar");
-
+const intro = document.querySelector("#intro");
+const goal = document.querySelector(".goal");
+const instructions = document.querySelector(".instructions");
 /*------------------ 
 FUNCTIONS 
 ------------------*/
@@ -195,10 +196,11 @@ function init() {
 
   //sets invaders' locations
   const enemyLoc = [
-    85, 86, 87, 88, 89, 90, 91, 92, 117, 118, 119, 120, 121, 122, 123, 124, 149,
-    150, 151, 152, 153, 154, 155, 156, 181, 182, 183, 184, 185, 186, 187, 188,
-    213, 214, 215, 216, 217, 218, 219, 220, 245, 246, 247, 248, 249, 250, 251,
-    252, 277, 278, 279, 280, 281, 282, 283, 284,
+    // 85, 86, 87, 88, 89, 90, 91, 92, 117, 118, 119, 120, 121, 122, 123, 124, 149,
+    // 150, 151, 152, 153, 154, 155, 156, 181, 182, 183, 184, 185, 186, 187, 188,
+    // 213, 214, 215, 216, 217, 218, 219, 220, 245, 246, 247, 248, 249, 250, 251,
+    252,
+    277, 278, 279, 280, 281, 282, 283, 284,
   ];
   enemies = [];
   for (let i = 0; i < enemyLoc.length; i++) {
@@ -209,12 +211,17 @@ function init() {
   moveEnemyID = setInterval(moveEnemy, 500);
 
   statusBar.style.visibility = "visible";
+
+  document.addEventListener("keydown", handleKeyDown);
+
   render();
 }
 
 function render() {
   renderBoard();
   renderStats();
+  if (checkForWin()) renderModalWin();
+  if (checkForLose()) renderModalLose();
 }
 
 function renderBoard() {
@@ -230,16 +237,43 @@ function renderStats() {
   enemyNum.innerText = `${EnemyShip.enemyNum}`;
 }
 
+function renderModalWin() {
+  intro.style.fontSize = "6vmin";
+  intro.style.textAlign = "center";
+  intro.innerHTML = "<strong>Congratulations. You Won!</strong>";
+  goal.style.textAlign = "center";
+  goal.innerHTML = "<em>Aren't you glad you got to use the Z key? 😜</em>";
+  modal.showModal();
+}
+
+function renderModalLose() {
+  intro.style.fontSize = "6vmin";
+  intro.style.textAlign = "center";
+  intro.innerHTML = "<strong>GAME OVER  👾</strong>";
+  goal.style.textAlign = "center";
+  goal.innerText = "Sorry, Better luck next time!";
+  modal.showModal();
+}
+
 function checkForWin() {
   if (EnemyShip.enemyNum === 0) {
+    player.bullets.forEach((bullet) => {
+      board.splice(bullet.location, 1, 0);
+      clearInterval(bullet.intervalId);
+    });
     player.isWinner = true;
     clearInterval(moveEnemyID);
+    document.removeEventListener("keydown", handleKeyDown);
+    return true;
   }
+}
 
+function checkForLose() {
   for (let enemy of enemies) {
     if (enemy.location % WIDTH === 0) {
       player.isGameOver = true;
       clearInterval(moveEnemyID);
+      return true;
     }
   }
 }
@@ -277,10 +311,9 @@ function moveEnemy() {
   checkForWin();
 }
 
-/*------------------ 
-    EVENT LISTENERS 
--------------------*/
-document.addEventListener("keydown", (e) => {
+function handleKeyDown(e) {
+  if (player.isGameOver) return;
+  if (player.isWinner) return;
   switch (e.key) {
     case "ArrowLeft":
       player.moveShipLeft();
@@ -301,7 +334,10 @@ document.addEventListener("keydown", (e) => {
       console.log("Invalid key input"); //TODO: replace with 'buzz/error' sound
       break;
   }
-});
+}
+/*------------------ 
+    EVENT LISTENERS 
+-------------------*/
 
 playBtn.addEventListener("click", () => {
   modal.close();

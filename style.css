@@ -241,7 +241,7 @@ dialog {
 /* dialog::backdrop {
     background-color: rgba(20, 3, 20, 0.8);
 } */
-dialog > div {
+dialog > .text-bg-image {
     background: url(https://i.imgur.com/gUO1y0o.jpg);
     background-color: #000;
     background-clip: text;
