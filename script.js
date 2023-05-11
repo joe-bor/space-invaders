@@ -53,37 +53,45 @@ class PlayerShip {
 
   moveShipLeft() {
     if (this.location % WIDTH !== 0) {
-      board.splice(this.location, 1, 0);
-      board.splice(this.location - 1, 1, "hero");
-      this.location = this.location - 1;
-      render();
+      if (board[this.location - 1] === 0) {
+        board.splice(this.location, 1, 0);
+        board.splice(this.location - 1, 1, "hero");
+        this.location = this.location - 1;
+        render();
+      }
     }
   }
 
   moveShipRight() {
     if (this.location % WIDTH !== WIDTH - 1) {
-      board.splice(this.location, 1, 0);
-      board.splice(this.location + 1, 1, "hero");
-      this.location = this.location + 1;
-      render();
+      if (board[this.location + 1] === 0) {
+        board.splice(this.location, 1, 0);
+        board.splice(this.location + 1, 1, "hero");
+        this.location = this.location + 1;
+        render();
+      }
     }
   }
 
   moveShipUp() {
     if (this.location - WIDTH >= 0) {
-      board.splice(this.location, 1, 0);
-      board.splice(this.location - WIDTH, 1, "hero");
-      this.location = this.location - WIDTH;
-      render();
+      if (board[this.location - WIDTH] === 0) {
+        board.splice(this.location, 1, 0);
+        board.splice(this.location - WIDTH, 1, "hero");
+        this.location = this.location - WIDTH;
+        render();
+      }
     }
   }
 
   moveShipDown() {
     if (this.location + WIDTH <= 575) {
-      board.splice(this.location, 1, 0);
-      board.splice(this.location + WIDTH, 1, "hero");
-      this.location = this.location + WIDTH;
-      render();
+      if (board[this.location + WIDTH] === 0) {
+        board.splice(this.location, 1, 0);
+        board.splice(this.location + WIDTH, 1, "hero");
+        this.location = this.location + WIDTH;
+        render();
+      }
     }
   }
 
@@ -94,6 +102,7 @@ class PlayerShip {
       let bullet = new Bullet(this, this.location + 1);
       this.bullets.push(bullet);
       board[bullet.location] = "bullet";
+      soundShoot.play();
       bullet.intervalId = setInterval(bullet.moveBullet.bind(bullet), 100);
       render();
     }
@@ -112,6 +121,7 @@ class EnemyShip {
 
   destroyShip() {
     if (this.isAlive === true) {
+      soundInvaderKilled.play();
       this.isAlive = false;
       EnemyShip.enemyNum--;
     }
@@ -150,7 +160,11 @@ const MARKER = {
   bullet: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" fill="#d03535" viewBox="0 0 256 256"><path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z"></path></svg>`,
   0: " ",
 };
-
+const soundShoot = new Audio("SoundEffects/shoot.wav");
+const soundInvaderKilled = new Audio("SoundEffects/invaderKilled.wav");
+const soundInvaderMove = new Audio("SoundEffects/invaderMove.wav");
+const soundGameOver = new Audio("SoundEffects/retroGameOver.wav");
+const soundPlayerWins = new Audio("SoundEffects/winner.wav");
 /*------------------
     STATE VARIABLES 
 --------------------*/
@@ -196,11 +210,10 @@ function init() {
 
   //sets invaders' locations
   const enemyLoc = [
-    // 85, 86, 87, 88, 89, 90, 91, 92, 117, 118, 119, 120, 121, 122, 123, 124, 149,
-    // 150, 151, 152, 153, 154, 155, 156, 181, 182, 183, 184, 185, 186, 187, 188,
-    // 213, 214, 215, 216, 217, 218, 219, 220, 245, 246, 247, 248, 249, 250, 251,
-    252,
-    277, 278, 279, 280, 281, 282, 283, 284,
+    85, 86, 87, 88, 89, 90, 91, 92, 117, 118, 119, 120, 121, 122, 123, 124, 149,
+    150, 151, 152, 153, 154, 155, 156, 181, 182, 183, 184, 185, 186, 187, 188,
+    213, 214, 215, 216, 217, 218, 219, 220, 245, 246, 247, 248, 249, 250, 251,
+    252, 277, 278, 279, 280, 281, 282, 283, 284,
   ];
   enemies = [];
   for (let i = 0; i < enemyLoc.length; i++) {
@@ -238,6 +251,7 @@ function renderStats() {
 }
 
 function renderModalWin() {
+  soundPlayerWins.play();
   intro.style.fontSize = "6vmin";
   intro.style.textAlign = "center";
   intro.innerHTML = "<strong>Congratulations. You Won!</strong>";
@@ -247,6 +261,7 @@ function renderModalWin() {
 }
 
 function renderModalLose() {
+  soundGameOver.play();
   intro.style.fontSize = "6vmin";
   intro.style.textAlign = "center";
   intro.innerHTML = "<strong>GAME OVER  👾</strong>";
@@ -271,8 +286,8 @@ function checkForWin() {
 function checkForLose() {
   for (let enemy of enemies) {
     if (enemy.location % WIDTH === 0) {
-      player.isGameOver = true;
       clearInterval(moveEnemyID);
+      player.isGameOver = true;
       return true;
     }
   }
@@ -308,6 +323,7 @@ function moveEnemy() {
       if (enemy.isAlive) enemy.moveEnemyShipsUp();
     });
   }
+  soundInvaderMove.play();
   checkForWin();
 }
 
@@ -331,7 +347,7 @@ function handleKeyDown(e) {
       player.shootBullet();
       break;
     default:
-      console.log("Invalid key input"); //TODO: replace with 'buzz/error' sound
+      console.log("Invalid key input");
       break;
   }
 }
@@ -343,17 +359,3 @@ playBtn.addEventListener("click", () => {
   modal.close();
   init();
 });
-
-/*
-*Finish implementing Bullet movement and how it interacts with collisions
-*Set win and lose conditions
-!Create modal -> before playing
-!Gather Sound Effects
-!Look for 'logos' or images'
-!CSS
-
-
-!Refactor: splice movements into one
-!Refactor: moveShip functions?
-
-*/
