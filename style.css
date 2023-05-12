@@ -162,13 +162,15 @@ body{
 }
 
 #status-bar {
-    background-color: grey;
-    grid-column-start: 2;
+    background: rgb(20, 123, 158);
+    background: linear-gradient(56deg, rgba(20, 123, 158, 1) 0%, rgba(76, 59, 113, 1) 58%, rgba(2, 31, 75, 1) 100%);    grid-column-start: 2;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows:3fr 1fr;
     writing-mode: vertical-rl;
     text-orientation: upright;
+    color: rgb(211, 116, 170);
+    font-weight: bold;
     visibility: hidden;
 }
 
