@@ -22,7 +22,6 @@ class Bullet {
     else if (board[this.location + 1] === 0) {
       board.splice(this.location, 2, 0, this);
       this.location += 1;
-      //TODO: REVIEW
     } else if (board[this.location + 1] instanceof EnemyShip) {
       board.splice(this.location, 1, 0);
       this.location += 1;
@@ -39,7 +38,7 @@ class Bullet {
       else {
         board.splice(this.location, 1, 0);
         this.owner.updateScore(ship);
-        ship.destroyShip();
+        ship.damageShip();
       }
     }
   }
@@ -142,6 +141,13 @@ class EnemyShip {
     EnemyShip.enemyNum++;
   }
 
+  damageShip() {
+    this.health -= 1;
+
+    if (this.health === 0) this.destroyShip();
+    return;
+  }
+
   destroyShip() {
     if (this.isAlive === true) {
       soundInvaderKilled.play();
@@ -211,6 +217,7 @@ const playBtn = document.querySelector("#play-button");
 const intro = document.querySelector("#intro");
 const goal = document.querySelector(".goal");
 const instructions = document.querySelector(".instructions");
+const ulEl = document.querySelector("ul");
 /*------------------ 
 FUNCTIONS 
 ------------------*/
@@ -269,9 +276,18 @@ function renderModalWin() {
   soundPlayerWins.play();
   intro.style.fontSize = "6vmin";
   intro.style.textAlign = "center";
+  intro.style.margin = "8vmin";
   intro.innerHTML = "<strong>Congratulations. You Won!</strong>";
   goal.style.textAlign = "center";
+  goal.style.marginTop = "-2vmin";
+  goal.style.fontSize = "2vmin";
   goal.innerHTML = "<em>Aren't you glad you got to use the Z key? 😜</em>";
+  instructions.innerHTML =
+    "Created by : <br> <span id='creator'>Joezari Borlongan <br> SEIR 321 FRANCES </span>";
+  instructions.style.marginTop = "20vmin";
+  instructions.style.fontSize = "3vmin";
+  instructions.textAlign = "left";
+  ulEl.remove();
   modal.showModal();
 }
 
@@ -302,6 +318,7 @@ function checkForLose() {
   for (let enemy of enemies) {
     if (enemy.location % WIDTH === 0) {
       clearInterval(moveEnemyID);
+      document.removeEventListener("keydown", handleKeyDown);
       player.isGameOver = true;
       return true;
     }
@@ -339,7 +356,6 @@ function moveEnemy() {
     });
   }
   soundInvaderMove.play();
-  checkForWin();
 }
 
 function handleKeyDown(e) {
@@ -374,12 +390,3 @@ playBtn.addEventListener("click", () => {
   modal.close();
   init();
 });
-
-/**
- * GET rid of marker
- * refactor move of ship, bullet, enemies
- * collision
- *
- *
- * search for 'ufo' , 'bullets'
- */

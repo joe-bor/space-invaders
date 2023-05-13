@@ -9,7 +9,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url(https://i.imgur.com/fSk3jkJ.jpg), #000;
+    background: #000;
     background-size: 120% 100%;
     z-index: -1;
 }
@@ -304,4 +304,8 @@ li {
     cursor: url(https://i.imgur.com/i4eqcpD.png), pointer ;
     color:rgb(211, 116, 170);
     background-color: rgb(20, 135, 196);
+}
+
+#creator {
+    color: rgb(224, 54, 153);
 }
