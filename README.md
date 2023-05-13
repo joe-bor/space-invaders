@@ -6,8 +6,17 @@ Originally released in 1978, Space Invaders is a classic arcade retro game that 
 
 ## Screenshot(s):
 
+- This is what my wire frame and pseudo code looked like before starting on the project
+
+![Screenshot of the wire frame and pseudo code](https://i.imgur.com/L5mwnB3.png)
+
+- Modal with a brief intro to the game
+
 ![Modal of the game with very brief introductions](https://i.imgur.com/zCqmnvK.png)
-![A player spaceship trying to shoot down the invaders](https://i.imgur.com/TedD4E7.png)
+
+- In game screenshot of the game
+
+![A player spaceship trying to shoot down the invaders](https://i.imgur.com/TZK1ps3.png)
 
 ---
 
@@ -33,4 +42,4 @@ Originally released in 1978, Space Invaders is a classic arcade retro game that 
   - after reaching a certain point on the map
   - after a certain number of invaders are destroyed
 - Limit player's bullets
-- Create different invaders
+- Create different types of invaders
