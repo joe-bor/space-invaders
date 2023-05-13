@@ -187,6 +187,7 @@ const soundInvaderKilled = new Audio("SoundEffects/invaderKilled.wav");
 const soundInvaderMove = new Audio("SoundEffects/invaderMove.wav");
 const soundGameOver = new Audio("SoundEffects/retroGameOver.wav");
 const soundPlayerWins = new Audio("SoundEffects/winner.wav");
+
 /*------------------
     STATE VARIABLES 
 --------------------*/

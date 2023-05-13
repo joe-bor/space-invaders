@@ -149,7 +149,6 @@ body{
     display: grid;
     grid-template-columns: repeat(32, 1fr); /* WIDTH: (98 / 32) = 3.06vw  */
     grid-template-rows: repeat(18, 1fr);    /* HEIGHT: (90 / 18) = 5vh */
-    /* background:  url(https://i.imgur.com/fSk3jkJ.jpg); */
 }
 
 #game-board .tiles {
