@@ -44,6 +44,47 @@ class Bullet {
   }
 }
 
+class EnemyBullet {
+  constructor(
+    owner,
+    location,
+    intervalId,
+    image = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" fill="#d03535" viewBox="0 0 256 256"><path d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128Z"></path></svg>`
+  ) {
+    this.owner = owner;
+    this.location = location;
+    this.intervalId = intervalId;
+    this.image = image;
+  }
+
+  moveBullet() {
+    if (this.location % WIDTH === 0) {
+      board.splice(this.location, 1, 0);
+      clearInterval(this.intervalId);
+    }
+    //check what's on the index next to it
+    else if (board[this.location - 1] instanceof Bullet) {
+      board.splice(this.location, 1, 0);
+      clearInterval(this.intervalId);
+    } else if (board[this.location + -1] === 0) {
+      board.splice(this.location, 1, 0);
+      this.location -= 1;
+      board.splice(this.location, 1, this);
+    } else if (board[this.location - 1] instanceof PlayerShip) {
+      board.splice(this.location, 1, 0);
+      this.location -= 1;
+      clearInterval(this.intervalId);
+      this.collideBullet(board[this.location]);
+    }
+    render();
+  }
+
+  collideBullet(ship) {
+    board.splice(this.location, 0);
+    ship.damageShip();
+  }
+}
+
 class PlayerShip {
   constructor(
     health = 5,
@@ -123,6 +164,15 @@ class PlayerShip {
   updateScore(ship) {
     this.score += ship.location % WIDTH;
   }
+
+  damageShip() {
+    this.health -= 1;
+
+    if (this.health === 0) {
+      this.isAlive = false;
+      this.isGameOver = true;
+    }
+  }
 }
 
 class EnemyShip {
@@ -175,6 +225,23 @@ class EnemyShip {
     board.splice(this.location - 1, 1, this);
     this.location = this.location - 1;
     render();
+  }
+
+  shootBullet() {
+    let randomNum = Math.random();
+    if (randomNum >= 0.8) {
+      if (board[this.location - 1] instanceof EnemyShip) {
+        return;
+      } else {
+        let enemyBullet = new EnemyBullet(this, this.location - 1);
+        board[enemyBullet.location] = enemyBullet;
+        enemyBullet.intervalId = setInterval(
+          enemyBullet.moveBullet.bind(enemyBullet),
+          100
+        );
+        render();
+      }
+    }
   }
 }
 
@@ -324,6 +391,12 @@ function checkForLose() {
       return true;
     }
   }
+  if (player.health === 0 || player.isAlive === false) {
+    player.isGameOver = true;
+    clearInterval(moveEnemyID);
+    document.removeEventListener("keydown", handleKeyDown);
+    return true;
+  }
 }
 
 function moveEnemy() {
@@ -331,14 +404,20 @@ function moveEnemy() {
     //bottom border
     if (enemies[i].location > 543) {
       enemies.forEach((enemy) => {
-        if (enemy.isAlive) enemy.moveEnemyShipsLeft();
+        if (enemy.isAlive) {
+          enemy.moveEnemyShipsLeft();
+          enemy.shootBullet();
+        }
       });
       isGoingDown = false;
       break;
       //top border
     } else if (enemies[i].location < 32) {
       enemies.forEach((enemy) => {
-        if (enemy.isAlive) enemy.moveEnemyShipsLeft();
+        if (enemy.isAlive) {
+          enemy.moveEnemyShipsLeft();
+          enemy.shootBullet();
+        }
       });
       isGoingDown = true;
       break;
@@ -348,12 +427,18 @@ function moveEnemy() {
   if (isGoingDown) {
     enemies.reverse();
     enemies.forEach((enemy) => {
-      if (enemy.isAlive) enemy.moveEnemyShipsDown();
+      if (enemy.isAlive) {
+        enemy.shootBullet();
+        enemy.moveEnemyShipsDown();
+      }
     });
     enemies.reverse();
   } else if (!isGoingDown) {
     enemies.forEach((enemy) => {
-      if (enemy.isAlive) enemy.moveEnemyShipsUp();
+      if (enemy.isAlive) {
+        enemy.moveEnemyShipsUp();
+        enemy.shootBullet();
+      }
     });
   }
   soundInvaderMove.play();
