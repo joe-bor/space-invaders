@@ -1,3 +1,31 @@
+  /*
+    Your code is immaculate, and I noticed you got the enemy ships to fire back at the 
+    player! Congrats! 
+    I noticed that the enemy bullets can 'erased' by a single bullet fired by the 
+    player, as dictated by the moveBullet() method of enemyBullet, which has as a 
+    condition: 
+      else if (board[this.location - 1] instanceof Bullet) {
+        board.splice(this.location, 1, 0);
+        clearInterval(this.intervalId);) 
+      }
+    So when the two bullets 'collide' and occupy the same space, the enemyBullet is 
+    nullified. I do not know if this is standard Space Invaders mechanics, but it
+    appears to make it nearly impossible to lose because when the player 'sprays and 
+    prays' they can't be hit by bullets. you could implement some functionality to 
+    remember or store the 'next' location of the enemy bullet and so that when it occu-
+    pies the same space as the player bullet, it does not get erased from the board. 
+    You could possibly have a seperate variable store the hypothetical next location 
+    of the bullet so that when it does occupy the same space as a player bullet, the 
+    interval will skip to the variable where the hypothetical next location would be.
+    
+    I read through and was impressed with your rigorous application of objects and classes!
+    I also wanted to applaud your use of ternary conditions for cleaner, dryer code!
+    Your key handling function was very smooth as well; I know for mine I used a single 
+    function to handle all movements, using if-else conditionals to parse out the functionality
+    for each button. I noticed how you used switch-case for the same functionality. This
+    is more readable and succinct than the bulky if-else statements. It is also unique
+    how you used a function for keyboard event handling instead of an eventListener.
+  */
 class Bullet {
   constructor(
     owner,
@@ -229,6 +257,7 @@ class EnemyShip {
 
   shootBullet() {
     let randomNum = Math.random();
+    this.velocity = this.location -2
     if (randomNum >= 0.8) {
       if (board[this.location - 1] instanceof EnemyShip) {
         return;
