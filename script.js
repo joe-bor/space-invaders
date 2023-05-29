@@ -257,7 +257,6 @@ class EnemyShip {
 
   shootBullet() {
     let randomNum = Math.random();
-    this.velocity = this.location -2
     if (randomNum >= 0.8) {
       if (board[this.location - 1] instanceof EnemyShip) {
         return;
